@@ -48,33 +48,16 @@ publishing {
 }
 
 artifactory {
-    contextUrl = 'https://oss.jfrog.org/artifactory'
+    contextUrl = 'https://fullcontact.artifactoryonline.com/fullcontact'
     publish {
+        contextUrl = 'https://fullcontact.artifactoryonline.com/fullcontact'
         repository {
-            repoKey = 'oss-snapshot-local'
+            repoKey = 'plugins-releases-local'
+            username = "$repoUsername"
+            password = "$repoPassword"
         }
         defaults {
             publications 'plugin'
-        }
-    }
-}
-
-artifactoryPublish { task ->
-    doFirst {
-        if (!isSnapshot) {
-            throw new GradleException('Cannot publish non-SNAPSHOT versions to OJO!')
-        }
-    }
-    gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask(task)) {
-            project.artifactory {
-                publish {
-                    repository {
-                        username = bintrayUser
-                        password = bintrayKey
-                    }
-                }
-            }
         }
     }
 }

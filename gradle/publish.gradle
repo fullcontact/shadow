@@ -1,9 +1,9 @@
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory-publish'
+apply plugin: 'com.jfrog.artifactory'
 apply plugin: "com.gradle.plugin-publish"
 
-group = 'com.github.jengelman.gradle.plugins'
+group = 'com.github.fullcontact.jengelman.gradle.plugins'
 def versionString = file('src/main/resources/shadow-version.txt').text.trim()
 version = versionString
 
@@ -22,6 +22,11 @@ def pomConfig = {
             id 'jengelman'
             name 'John Engelman'
             email 'john.r.engelman@gmail.com'
+        }
+        developer {
+            id 'johkelly'
+            name 'Jack Kelly'
+            email 'jack@fullcontact.com'
         }
     }
 }
@@ -43,33 +48,16 @@ publishing {
 }
 
 artifactory {
-    contextUrl = 'https://oss.jfrog.org/artifactory'
+    contextUrl = 'https://fullcontact.artifactoryonline.com/fullcontact'
     publish {
+        contextUrl = 'https://fullcontact.artifactoryonline.com/fullcontact'
         repository {
-            repoKey = 'oss-snapshot-local'
+            repoKey = 'plugins-releases-local'
+            username = "$repoUsername"
+            password = "$repoPassword"
         }
         defaults {
             publications 'plugin'
-        }
-    }
-}
-
-artifactoryPublish { task ->
-    doFirst {
-        if (!isSnapshot) {
-            throw new GradleException('Cannot publish non-SNAPSHOT versions to OJO!')
-        }
-    }
-    gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask(task)) {
-            project.artifactory {
-                publish {
-                    repository {
-                        username = bintrayUser
-                        password = bintrayKey
-                    }
-                }
-            }
         }
     }
 }
@@ -109,20 +97,20 @@ bintray {
 }
 
 pluginBundle {
-    website = 'https://github.com/johnrengelman/shadow'
-    vcsUrl = 'https://github.com/johnrengelman/shadow'
-    description = 'A Gradle plugin for collapsing all dependencies and project code into a single Jar file.'
+    website = 'https://github.com/fullcontact/shadow'
+    vcsUrl = 'https://github.com/fullcontact/shadow'
+    description = 'FullContact fork of a Gradle plugin for collapsing all dependencies and project code into a single Jar file.'
     tags = ['onejar', 'shade', 'fatjar', 'uberjar']
 
     plugins {
         shadowPlugin {
-            id = 'com.github.johnrengelman.shadow'
-            displayName = 'Shadow Plugin'
+            id = 'com.github.fullcontact.johnrengelman.shadow'
+            displayName = 'FCShadow Plugin'
         }
         pluginShadowPlugin {
-            id = 'com.github.johnrengelman.plugin-shadow'
-            displayName = 'Plugin-Shadow Plugin'
-            description = "Auto configures shadow & package relocation for Gradle plugins."
+            id = 'com.github.fullcontact.johnrengelman.plugin-shadow'
+            displayName = 'Plugin-FCShadow Plugin'
+            description = "FullContact fork which auto configures shadow & package relocation for Gradle plugins."
         }
     }
 
